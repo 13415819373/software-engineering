@@ -1,0 +1,41 @@
+/* CSS 是网页的"外观":决定颜色、大小、间距。 */
+/* 写法:选择器 { 属性: 值; }  例如 "h1 { color: 颜色; }" 表示"把所有一级标题的文字改成这个颜色"。 */
+
+/* body = 整个页面 */
+body {
+  margin: 0;
+  padding: 3rem 1.25rem;
+  background: #f2f5fa; /* 页面背景色。【任务第三步:可以改这里】#开头的是颜色代码,也可以写 lightyellow 这样的英文颜色名 */
+  color: #202938; /* 默认文字颜色 */
+  font-family: "Segoe UI", sans-serif; /* 字体 */
+}
+
+/* main = 页面中间那块白色卡片 */
+main {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 0.75rem; /* 圆角 */
+}
+
+/* h1 = 一级标题 */
+h1 {
+  color: #315a9b; /* 标题颜色。【任务第三步:可以改这里】 */
+}
+
+/* button = 按钮 */
+button {
+  padding: 0.65rem 1rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: #315a9b; /* 按钮背景色 */
+  color: white; /* 按钮文字颜色 */
+  cursor: pointer; /* 鼠标移上去变成小手 */
+}
+
+/* #result = id 是 result 的那一段文字(前面的 # 表示"按名牌找") */
+#result {
+  min-height: 1.5rem;
+  margin-top: 1.25rem;
+}

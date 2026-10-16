@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- HTML 是网页的"骨架":说明页面里有什么内容。浏览器从上往下读,按标签把内容显示出来。 -->
+<!-- 标签成对出现:<h1>…</h1> 表示"从这里开始是标题,到这里结束"。 -->
+<html lang="zh-CN">
+  <head>
+    <!-- head 里是给浏览器看的说明信息,不会直接显示在页面上 -->
+    <meta charset="utf-8"> <!-- 文字编码,保证中文不乱码 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- 手机适配,现在不用管 -->
+    <title>浏览器请求小实验</title> <!-- 显示在浏览器标签页上的名字 -->
+    <link rel="stylesheet" href="styles.css"> <!-- 引入样式文件:页面的"外观"去 styles.css 里找 -->
+  </head>
+  <body>
+    <!-- body 里是页面上真正显示的内容 -->
+    <main>
+      <h1>浏览器请求小实验</h1> <!-- h1 = 一级标题。【任务第三步:改成你自己的标题】 -->
+      <p>点击按钮，观察浏览器如何向服务器请求一段 JSON 数据。</p> <!-- p = 一段文字。【任务第三步:改成你自己的说明】 -->
+      <button id="load-message">获取消息</button> <!-- button = 按钮。id 是它的"名牌",JavaScript 靠这个名牌找到它 -->
+      <p id="result" aria-live="polite">消息会显示在这里。</p> <!-- 点击按钮后,JavaScript 会把消息写进这一段 -->
+    </main>
+    <!-- 引入脚本文件:页面的"行为"去 app.js 里找。放在最后,保证上面的按钮已经存在,JavaScript 才找得到它 -->
+    <script src="app.js"></script>
+  </body>
+</html>
