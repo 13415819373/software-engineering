@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>原生 JS 与 React：同一个功能的两种写法</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1f2328;--mute:#656d76;--line:#d8dce1;--blue:#2563eb;--green:#16a34a;--orange:#d97706;--code:#f0f2f5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171a;--card:#1d2125;--text:#e6e8ea;--mute:#9aa4ad;--line:#2f353b;--blue:#6ea0ff;--green:#4ade80;--orange:#fbbf24;--code:#12151a}}
+:root[data-theme="dark"]{--bg:#14171a;--card:#1d2125;--text:#e6e8ea;--mute:#9aa4ad;--line:#2f353b;--blue:#6ea0ff;--green:#4ade80;--orange:#fbbf24;--code:#12151a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",Arial,sans-serif}
+main{max-width:1040px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;margin:0 0 6px}
+.lead{color:var(--mute);margin:0 0 16px}
+.note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:8px;padding:10px 14px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.card h2{font-size:16px;margin:0 0 10px}
+.card.n h2{color:var(--blue)}.card.r h2{color:var(--green)}
+label{display:block;margin-bottom:6px;color:var(--mute)}
+.sum{margin:0 0 8px;font-weight:600}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
+li .name{flex:1}.cnt{color:var(--mute);font-variant-numeric:tabular-nums}
+.tag{font-size:12px;color:#fff;background:var(--orange);border-radius:4px;padding:0 6px}
+button{font:inherit;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text);cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+[hidden]{display:none!important}
+details{margin-top:10px}summary{cursor:pointer;color:var(--mute)}
+pre{margin:8px 0 0;padding:10px;background:var(--code);border-radius:8px;overflow-x:auto;font:12.5px/1.55 ui-monospace,Consolas,monospace}
+</style>
+</head>
+<body>
+<main>
+<h1>同一个功能，两种写法</h1>
+<p class="lead">活动报名列表：点"报名/取消"，看人数、已满标记、顶部统计、筛选如何保持一致。两边行为完全相同，下方代码就是正在运行的代码。</p>
+<div class="note">两种写法<b>都能写对</b>。区别在于：原生版要靠你记得"数据一变，要同步哪几处"（代码里标了 ①②③）；React 版只描述"数据是这样时，页面长这样"。再加一个需求，比如"每个活动显示还剩几个名额"，原生版要改同步函数，并确保每条路径都调用到；React 版只在页面描述里加一行。</div>
+<div class="grid">
+<section class="card n">
+<h2>原生 HTML + JS</h2>
+<label><input type="checkbox" id="n-only"> 只看还有名额的</label>
+<p class="sum" id="n-sum"></p>
+<ul id="n-list"></ul>
+<details><summary>查看完整代码</summary><pre data-src="n-code"></pre></details>
+</section>
+<section class="card r">
+<h2>React</h2>
+<div id="root"></div>
+<details><summary>查看完整代码</summary><pre data-src="r-code"></pre></details>
+</section>
+</div>
+</main>
+
+<script id="n-code">
+const activities = [
+  { id: 1, name: "算法入门讲座", cap: 3, n: 2, mine: false },
+  { id: 2, name: "摄影社团招新", cap: 50, n: 12, mine: false },
+  { id: 3, name: "篮球友谊赛", cap: 2, n: 2, mine: false },
+];
+let onlyOpen = false;
+const list = document.getElementById("n-list");
+
+activities.forEach(a => {                      // 首次渲染：每个活动建一张卡片
+  const li = document.createElement("li");
+  li.id = "n-" + a.id;
+  li.innerHTML = '<span class="name"></span><span class="cnt"></span><span class="tag">已满</span><button></button>';
+  li.querySelector("button").onclick = () => toggle(a);
+  list.appendChild(li);
+  updateCard(a);
+});
+
+function updateCard(a) {                   // ① 更新一张卡片
+  const li = document.getElementById("n-" + a.id);
+  li.querySelector(".name").textContent = a.name;
+  li.querySelector(".cnt").textContent = a.n + "/" + a.cap;
+  li.querySelector(".tag").hidden = a.n < a.cap;
+  const btn = li.querySelector("button");
+  btn.textContent = a.mine ? "取消报名" : "报名";
+  btn.disabled = !a.mine && a.n >= a.cap;
+  li.hidden = onlyOpen && a.n >= a.cap;
+}
+function updateSummary() {                 // ② 更新顶部统计
+  document.getElementById("n-sum").textContent =
+    "我已报名 " + activities.filter(a => a.mine).length + " 个活动";
+}
+function toggle(a) {
+  a.mine = !a.mine;
+  a.n += a.mine ? 1 : -1;
+  updateCard(a);                           // 别忘了 ①
+  updateSummary();                         // 别忘了 ②
+}
+document.getElementById("n-only").onchange = ev => {
+  onlyOpen = ev.target.checked;
+  activities.forEach(updateCard);              // 别忘了 ③：筛选变了，每张卡片都要重算
+};
+updateSummary();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
+<script id="r-code" type="text/babel">
+const { useState } = React;
+const init = [
+  { id: 1, name: "算法入门讲座", cap: 3, n: 2, mine: false },
+  { id: 2, name: "摄影社团招新", cap: 50, n: 12, mine: false },
+  { id: 3, name: "篮球友谊赛", cap: 2, n: 2, mine: false },
+];
+
+function App() {
+  const [activities, setActivities] = useState(init);
+  const [onlyOpen, setOnlyOpen] = useState(false);
+
+  const toggle = id => setActivities(activities.map(a =>
+    a.id !== id ? a : { ...a, mine: !a.mine, n: a.n + (a.mine ? -1 : 1) }));
+
+  const shown = activities.filter(a => !onlyOpen || a.n < a.cap);
+
+  return (
+    <div>
+      <label>
+        <input type="checkbox" checked={onlyOpen}
+               onChange={ev => setOnlyOpen(ev.target.checked)} /> 只看还有名额的
+      </label>
+      <p className="sum">我已报名 {activities.filter(a => a.mine).length} 个活动</p>
+      <ul>
+        {shown.map(a => (
+          <li key={a.id}>
+            <span className="name">{a.name}</span>
+            <span className="cnt">{a.n}/{a.cap}</span>
+            {a.n >= a.cap && <span className="tag">已满</span>}
+            <button disabled={!a.mine && a.n >= a.cap} onClick={() => toggle(a.id)}>
+              {a.mine ? "取消报名" : "报名"}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+<script>
+document.querySelectorAll("pre[data-src]").forEach(function(p){
+  p.textContent = document.getElementById(p.dataset.src).textContent.trim();
+});
+</script>
+</body>
+</html>

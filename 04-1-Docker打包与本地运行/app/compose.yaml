@@ -1,0 +1,23 @@
+services:
+  api:
+    build: ./backend
+    environment:
+      DATABASE_PATH: /data/registrations.db
+    volumes:
+      - app-data:/data
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    environment:
+      API_ORIGIN: http://api:8000
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  app-data:
