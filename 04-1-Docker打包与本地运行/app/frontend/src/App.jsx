@@ -86,7 +86,7 @@ export default function App() {
     <main className="page">
       <header className="hero">
         <p className="eyebrow">活动管理 · Docker Compose 示例</p>
-        <h1>活动报名111</h1>
+        <h1>活动报名1211</h1>
         <p>网页把请求交给 API，报名信息由 SQLite 保存。</p>
         <label className="user-picker">
           当前练习用户
