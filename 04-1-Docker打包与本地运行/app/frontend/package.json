@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build1"
+    "build": "vite build"
   },
   "dependencies": {
     "@vitejs/plugin-react": "4.3.4",
